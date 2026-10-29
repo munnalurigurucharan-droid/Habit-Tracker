@@ -17,13 +17,15 @@ habit-tracker/
 │       └── lib/prisma.ts
 └── web/           Next.js 14 (App Router) + TypeScript + Tailwind CSS
     ├── app/
-    │   ├── page.tsx           Tracker grid (Screen 1)
-    │   ├── dashboard/page.tsx Overview dashboard (Screen 2)
-    │   └── progress/page.tsx  Overall progress ranking (Screen 3)
-    ├── components/    HabitTable, MonthSelector, ProgressLineChart,
-    │                  MonthlyDonut, WeeklyOverview, TopHabitsList
-    ├── lib/           api.ts (fetch client), dates.ts (calendar helpers)
-    └── types/habit.ts
+    │   ├── page.tsx               Study Desk: Home with Left Corner Dashboard & Center Motivation
+    │   ├── login/page.tsx         Nostalgic Student Login & Registration + 1-Click Demo Access
+    │   ├── daily-works/page.tsx   Daily Works: Spreadsheet Habit Checklist Grid
+    │   ├── dashboard/page.tsx     Monthly Overview: Consistency donut & weekly breakdown
+    │   └── progress/page.tsx      Overall Progress: Goal achievement & ranking table
+    ├── components/    HabitTable, MonthSelector, MonthlyDonut, ProgressLineChart,
+    │                  WeeklyOverview, TopHabitsList, SideBoard, AuthGuard, NavBar
+    ├── lib/           api.ts, auth-context.tsx, dates.ts
+    └── public/        nostalgic_study_motivation.jpg
 ```
 
 ## Database ER Diagram (text)
@@ -47,43 +49,11 @@ MonthConfig
   UNIQUE(userId, year, month)
 ```
 
-## API Reference
-
-| Method | Route                       | Auth | Description                                            |
-|--------|------------------------------|------|----------------------------------------------------------|
-| POST   | /api/auth/register            | No   | Create a user, returns JWT                               |
-| POST   | /api/auth/login                | No   | Authenticate, returns JWT                                 |
-| GET    | /api/habits                    | Yes  | List active habits (ordered)                              |
-| POST   | /api/habits                    | Yes  | Create a habit row                                          |
-| PATCH  | /api/habits/:id                | Yes  | Rename / change goal                                         |
-| DELETE | /api/habits/:id                | Yes  | Archive (soft delete) a habit                                |
-| PATCH  | /api/habits/reorder/bulk       | Yes  | Persist drag-and-drop row order                                |
-| GET    | /api/entries?year=&month=      | Yes  | Get all checkbox states for a month                             |
-| PUT    | /api/entries/toggle            | Yes  | Upsert one checkbox (habitId, date, completed)                    |
-| GET    | /api/overview?year=&month=     | Yes  | Aggregated dashboard payload (line/bar/donut/top10/progress rows)   |
-
-## Business logic notes / assumptions
-
-- **Week grouping**: the sheet groups days into 7-day "WEEK N" blocks starting on
-  day 1 of the month (not necessarily Mon–Sun), so the backend and `buildCalendarWeeks`
-  helper mirror that exactly.
-- **Goals** are per-habit monthly targets (the "GOALS" column). Progress % = completed / goal.
-- **Checkbox toggle** is idempotent (`PUT .../toggle` upserts on `(habitId, date)`), so
-  double-clicks or retries can't create duplicate entries.
-- **Soft delete**: removing a habit sets `isArchived = true` rather than deleting rows,
-  preserving historical entries for past months' analytics.
-- **Top 10 habits**: ranked by total completions in the selected month (ties broken by
-  insertion order); assumption since the source screenshot doesn't show the exact tie-break rule.
-- **Auth**: JWT bearer tokens (7-day expiry) via `/api/auth`; every other route requires it.
-  This was inferred/added — the screenshots don't show a login screen, but a "your data,
-  your dashboard" app needs one, so it's implemented as a reasonable addition and clearly
-  optional to disable for a local single-user setup.
-
-## Setup
+## Setup & Running
 
 ### 1. Database
 ```bash
-# using local Postgres, or docker:
+# using local PostgreSQL or Docker:
 docker run --name habit-pg -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=habit_tracker -p 5432:5432 -d postgres:16
 ```
 
@@ -92,7 +62,7 @@ docker run --name habit-pg -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=habit_tr
 cd server
 cp .env.example .env        # edit DATABASE_URL / JWT_SECRET if needed
 npm install
-npm run prisma:migrate      # creates tables
+npm run prisma:generate
 npm run dev                 # http://localhost:4000
 ```
 
@@ -104,13 +74,10 @@ npm install
 npm run dev                 # http://localhost:3000
 ```
 
-### 4. Try it
-1. POST to `/api/auth/register` (e.g. via curl/Postman) to create a user and grab the token.
-2. Store it: in the browser console on localhost:3000, run
-   `localStorage.setItem('token', '<your JWT>')`.
-3. Refresh — the Tracker page loads, add habits with the inline "Add a habit…" row,
-   and check off days. Overview and Overall Progress update automatically.
+### 4. Experience It
+1. Visit `http://localhost:3000`. You will be welcomed by the **Student Journal Login Screen**.
+2. Click **⚡ 1-Click Student Demo Login** (or sign in with your own credentials).
+3. On the **Home Study Desk**, view your **Left Corner Dashboard** with today's checklist and consistency metrics, centered around the nostalgic study motivation centerpiece.
+4. Move your cursor to the **far right edge** to slide open your **Shelves & Folders** sideboard.
+5. Click **Daily Works** to access your monthly spreadsheet habit tracking grid with live checkboxes and instant sync.
 
-(A dedicated `/login` and `/register` UI is straightforward to add with the existing
-`api.auth.login` / `api.auth.register` client methods — omitted here to stay focused
-on the three screens shown in the screenshots.)

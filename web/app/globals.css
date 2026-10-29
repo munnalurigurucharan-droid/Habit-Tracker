@@ -1,0 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    background-color: #faf8f5;
+    color: #1c1917;
+  }
+
+  .font-serif {
+    font-family: 'Newsreader', Georgia, serif;
+  }
+
+  .font-display {
+    font-family: 'Cinzel', serif;
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-3xl border border-stone-200/90 bg-white shadow-sm;
+  }
+  .table-header-cell {
+    @apply bg-stone-100 text-stone-800 text-xs font-semibold uppercase tracking-wide px-3 py-2 text-center border border-stone-200;
+  }
+  .table-cell {
+    @apply border border-stone-200 text-center text-sm px-2 py-1.5;
+  }
+}
+
+/* Custom smooth scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f5f1ea;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d6cbbf;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #b5a593;
+}
