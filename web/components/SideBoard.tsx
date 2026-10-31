@@ -16,6 +16,7 @@ import {
   Pin,
   Sparkles,
   BookOpen,
+  LucideIcon,
 } from "lucide-react";
 
 interface ShelfFolder {
@@ -23,7 +24,7 @@ interface ShelfFolder {
   name: string;
   subtitle: string;
   href: string;
-  icon: React.ComponentType<{ size?: number; className?: string }>;
+  icon: LucideIcon;
   badge?: string;
   color: string;
 }

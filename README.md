@@ -9,24 +9,13 @@ provided screenshots: a daily habit checklist grid, a monthly overview dashboard
 ```
 habit-tracker/
 ├── server/        Express + TypeScript + Prisma + PostgreSQL API
-│   ├── prisma/schema.prisma
-│   └── src/
-│       ├── index.ts
-│       ├── routes/        auth.ts, habits.ts, entries.ts, overview.ts
-│       ├── middleware/     auth.ts (JWT), errorHandler.ts
-│       └── lib/prisma.ts
-└── web/           Next.js 14 (App Router) + TypeScript + Tailwind CSS
-    ├── app/
-    │   ├── page.tsx               Study Desk: Home with Left Corner Dashboard & Center Motivation
-    │   ├── login/page.tsx         Nostalgic Student Login & Registration + 1-Click Demo Access
-    │   ├── daily-works/page.tsx   Daily Works: Spreadsheet Habit Checklist Grid
-    │   ├── dashboard/page.tsx     Monthly Overview: Consistency donut & weekly breakdown
-    │   └── progress/page.tsx      Overall Progress: Goal achievement & ranking table
-    ├── components/    HabitTable, MonthSelector, MonthlyDonut, ProgressLineChart,
-    │                  WeeklyOverview, TopHabitsList, SideBoard, AuthGuard, NavBar
-    ├── lib/           api.ts, auth-context.tsx, dates.ts
-    └── public/        nostalgic_study_motivation.jpg
+├── web/           Next.js 14 Full-Stack Frontend (Connected to server API)
+└── web-local/     Next.js 14 Local-First Frontend (Zero backend, browser localStorage, 1-click Vercel deploy)
 ```
+
+### Modes Available:
+1. **Full-Stack Mode (`server/` + `web/`)**: Multi-user, PostgreSQL persistence, JWT auth, cross-device sync.
+2. **Local-First Mode (`web-local/`)**: 100% serverless and private, data stored in browser `localStorage`, with JSON backup/restore buttons. Ideal for instant, free deployment on Vercel without configuring any databases.
 
 ## Database ER Diagram (text)
 
@@ -66,13 +55,21 @@ npm run prisma:generate
 npm run dev                 # http://localhost:4000
 ```
 
-### 3. Frontend
+### 3. Frontend (Full-Stack Mode)
 ```bash
 cd web
 cp .env.local.example .env.local
 npm install
 npm run dev                 # http://localhost:3000
 ```
+
+### 3b. Frontend (Local-First Mode - No Backend Needed)
+```bash
+cd web-local
+npm install
+npm run dev                 # http://localhost:3000
+```
+> **Vercel Deployment**: When deploying to Vercel, set **Root Directory** to `web-local`. No backend or environment variables required!
 
 ### 4. Experience It
 1. Visit `http://localhost:3000`. You will be welcomed by the **Student Journal Login Screen**.

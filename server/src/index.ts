@@ -12,7 +12,13 @@ import authRoutes from "./routes/auth";
 const app = express();
 
 app.use(helmet());
-app.use(cors({ origin: process.env.WEB_ORIGIN ?? "http://localhost:3000", credentials: true }));
+const allowedOrigins = process.env.WEB_ORIGIN
+  ? process.env.WEB_ORIGIN.includes(",")
+    ? process.env.WEB_ORIGIN.split(",").map((s) => s.trim())
+    : process.env.WEB_ORIGIN
+  : "http://localhost:3000";
+
+app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.use(express.json());
 app.use(morgan("dev"));
 
@@ -28,4 +34,8 @@ app.use("/api/overview", authMiddleware, overviewRoutes);
 app.use(errorHandler);
 
 const PORT = process.env.PORT ?? 4000;
-app.listen(PORT, () => console.log(`API listening on :${PORT}`));
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => console.log(`API listening on :${PORT}`));
+}
+
+export default app;
